@@ -2,26 +2,21 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-  
 env:
-  # NAMESPACE: elixirsys-net
   DOCKERFILE_PATH: ./docker/Dockerfile
   REGISTRY_URL: registry.circle360.net/utility
-  
+
 jobs:
   docker-push-deploy:
+    if: github.event_name == 'push'
     runs-on: circle360-runners
 
     steps:
-      - name: Set image/deployment/tag 
-      
+      - name: Set image/deployment/tag
+
         id: vars
         run: |
           # 1. Slugify repo name -> image name
