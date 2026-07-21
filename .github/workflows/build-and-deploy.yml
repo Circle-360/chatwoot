@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      
 env:
   # NAMESPACE: elixirsys-net
   DOCKERFILE_PATH: ./docker/Dockerfile
