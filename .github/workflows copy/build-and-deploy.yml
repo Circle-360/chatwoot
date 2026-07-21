@@ -1,0 +1,44 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+env:
+  # NAMESPACE: elixirsys-net
+  DOCKERFILE_PATH: ./docker/Dockerfile
+  REGISTRY_URL: registry.circle360.net/utility
+  
+jobs:
+  docker-push-deploy:
+    if: github.event_name == 'push'
+    runs-on: circle360-runners
+
+    steps:
+      - name: Set image/deployment/tag 
+      
+        id: vars
+        run: |
+          # 1. Slugify repo name -> image name
+          IMAGE_NAME=$(echo '${{ github.event.repository.name }}' | \
+            sed 's/\([a-z]\)\([A-Z]\)/\1-\2/g' | \
+            tr '[:upper:]' '[:lower:]' | \
+            sed 's/[._]/-/g' | \
+            sed 's/--*/-/g' | \
+            sed 's/^-\|-$//g')
+          # 2. Deployment name = image name (kept identical, no divergence)
+          DEPLOYMENT_NAME="${IMAGE_NAME}"
+          # 3. Tag = branch + v[run id]
+          IMAGE_TAG="${{ github.ref_name }}-v${{ github.run_number }}"
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> "$GITHUB_ENV"
+          echo "DEPLOYMENT_NAME=${DEPLOYMENT_NAME}" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "DEPLOYMENT_NAME=${DEPLOYMENT_NAME}" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Docker build & push
+        run: docker buildx build --network=host -t ${{ env.REGISTRY_URL }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} --push ${{ env.DOCKERFILE_PATH }}
