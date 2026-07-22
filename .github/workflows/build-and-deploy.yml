@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKERFILE_PATH: ./docker/Dockerfile
+  DOCKERFILE_PATH: ./docker
   REGISTRY_URL: registry.circle360.net/utility
 
 jobs:
