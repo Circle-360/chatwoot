@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKERFILE_PATH: ./docker
+  DOCKERFILE_PATH: ./
   REGISTRY_URL: registry.circle360.net/utility
 
 jobs:
@@ -41,4 +41,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Docker build & push
-        run: docker buildx build --network=host -t ${{ env.REGISTRY_URL }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} --push ${{ env.DOCKERFILE_PATH }}
+        run: docker buildx build --network=host -f ./docker/Dockerfile -t ${{ env.REGISTRY_URL }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} --push ${{ env.DOCKERFILE_PATH }}
