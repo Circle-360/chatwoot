@@ -30,7 +30,6 @@ jobs:
           DEPLOYMENT_NAME="${IMAGE_NAME}"
           # 3. Tag = branch + v[run id]
           IMAGE_TAG="${{ github.ref_name }}
-          #-v${{ github.run_number }}"
           echo "IMAGE_NAME=${IMAGE_NAME}" >> "$GITHUB_ENV"
           echo "DEPLOYMENT_NAME=${DEPLOYMENT_NAME}" >> "$GITHUB_ENV"
           echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
